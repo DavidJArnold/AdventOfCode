@@ -54,9 +54,8 @@ def make_move(moves, m_i, m_j, heights, move_set, finished):
         curr_height = heights[m_i][m_j]
         for mov in move_set:
             try:  # we get an error on the boundaries
-                test_height = heights[m_i + mov[0]][
-                    m_j + mov[1]
-                ]  # height of candidate position for next move
+                # height of candidate position for next move
+                test_height = heights[m_i + mov[0]][m_j + mov[1]]
                 if test_height <= curr_height + 1 and (
                     moves[m_i + mov[0]][m_j + mov[1]] == -1
                     or moves[m_i + mov[0]][m_j + mov[1]] > moves[m_i][m_j] + 1
