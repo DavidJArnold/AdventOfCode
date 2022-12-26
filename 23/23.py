@@ -109,11 +109,7 @@ def part2(filename: str) -> int:
 
 if __name__ == "__main__":
     FILE_NAME = "23.real.txt"
-    t1 = time.time()
     p1 = part1(FILE_NAME)
     print("Part 1:", p1)
-    print(time.time() - t1)
-    t2 = time.time()
     p2 = part2(FILE_NAME)
     print("Part 2:", p2)
-    print(time.time() - t2)
