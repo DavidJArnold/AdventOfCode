@@ -1,4 +1,4 @@
-from copy import deepcopy
+from datetime import datetime
 
 
 def parse(filename: str) -> list:
@@ -10,6 +10,7 @@ def parse(filename: str) -> list:
             if entry != ".":
                 field.append([(i, j), entry])
     return field
+
 
 def print_field(field, pos=None):
     # Helper function to visualise field area
@@ -24,73 +25,86 @@ def print_field(field, pos=None):
     max_x = max(x[0] for x in field.keys())
     min_y = min(x[1] for x in field.keys())
     max_y = max(x[1] for x in field.keys())
-    print("\n".join(["".join([field.get((i, j), ".") for i in range(min_x, max_x+1)]) for j in range(min_y,max_y+1)]))
+    print(
+        "\n".join(
+            [
+                "".join([field.get((i, j), ".") for i in range(min_x, max_x + 1)])
+                for j in range(min_y, max_y + 1)
+            ]
+        )
+    )
 
-def add_tuple(a, b):
-    """Adds two tuples element-wise"""
-    return tuple(a[i]+b[i] for i in range(2))
 
-dirs = {
-    ">": (1, 0),
-    "<": (-1, 0),
-    "^": (0, -1),
-    "v": (0, 1)
-}
-
-def move_wind(field: list) -> list:
-    width = max(f[0][0] for f in field) - min(f[0][0] for f in field) - 1
-    height = max(f[0][1] for f in field) - min(f[0][1] for f in field) - 1
-    
+def move_wind(field: list, width: int, height: int) -> list:
     walls = set(f[0] for f in field if f[1] == "#")
     for idx, elem in enumerate(field):
-        if elem[1] in dirs:
-            new_coord = add_tuple(elem[0], dirs[elem[1]])
+        new_coord = None
+        if elem[1] == ">":
+            new_coord = (elem[0][0] + 1, elem[0][1])
             if new_coord in walls:
-                if elem[1] in (">", "<"):
-                    size_ = width
-                elif elem[1] in ("^", "v"):
-                    size_ = height
-                new_coord = add_tuple(new_coord, tuple(-size_*s for s in dirs[elem[1]]))
+                new_coord = (new_coord[0] - width, new_coord[1])
+        elif elem[1] == "<":
+            new_coord = (elem[0][0] - 1, elem[0][1])
+            if new_coord in walls:
+                new_coord = (new_coord[0] + width, new_coord[1])
+        elif elem[1] == "^":
+            new_coord = (elem[0][0], elem[0][1] + 1)
+            if new_coord in walls:
+                new_coord = (new_coord[0], new_coord[1] - height)
+        elif elem[1] == "v":
+            new_coord = (elem[0][0], elem[0][1] - 1)
+            if new_coord in walls:
+                new_coord = (new_coord[0], new_coord[1] + height)
+        if new_coord is not None:
             field[idx] = [new_coord, elem[1]]
     return field
 
+
 def part1(filename: str) -> int:
     field = parse(filename)
+
     W = max(f[0][0] for f in field)
     H = max(f[0][1] for f in field)
-    num, _ = traverse(field, (1, 0), (W-1, H))
+
+    num, _ = traverse(field, (1, 0), (W - 1, H), W, H)
     return num
+
 
 def part2(filename: str) -> int:
     field = parse(filename)
     W = max(f[0][0] for f in field)
     H = max(f[0][1] for f in field)
     S = (1, 0)
-    E = (W-1, H)
-    num_steps1, field = traverse(field, S, E)
-    num_steps2, field = traverse(field, E, S)
-    num_steps3, field = traverse(field, S, E)
+    E = (W - 1, H)
+    num_steps1, field = traverse(field, S, E, W, H)
+    num_steps2, field = traverse(field, E, S, W, H)
+    num_steps3, field = traverse(field, S, E, W, H)
     return num_steps1 + num_steps2 + num_steps3
-def is_valid(candidate_pos, blocked, W, H):
-    return candidate_pos not in blocked and \
-        candidate_pos[0] >= 0 and \
-            candidate_pos[0] <= W and \
-                candidate_pos[1] >= 0 and \
-                    candidate_pos[1] <= H
 
-def traverse(field, start, end):
-    W = max(f[0][0] for f in field)
-    H = max(f[0][1] for f in field)
-    
+
+def is_valid(candidate_pos, blocked, W, H):
+    if candidate_pos[0] < 0:
+        return False
+    if candidate_pos[0] > W:
+        return False
+    if candidate_pos[1] < 0:
+        return False
+    if candidate_pos[1] > H:
+        return False
+    return candidate_pos not in blocked
+
+
+def traverse(field, start, end, W, H):
+
     pos = {start: 0}
     idx = 1
     while True:
-        field = move_wind(field)
-        blocked = set(p[0] for p in field)
+        field = move_wind(field, W - 1, H - 1)
+        blocked = (p[0] for p in field)
         new_pos = {}
         for p in pos:
-            for dir_ in [(0,0), (1,0), (-1,0), (0,1), (0,-1)]:
-                candidate_pos = add_tuple(p, dir_)
+            for dir_ in [(0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)]:
+                candidate_pos = (p[0] + dir_[0], p[1] + dir_[1])
                 if is_valid(candidate_pos, blocked, W, H):
                     new_pos[candidate_pos] = idx
         pos = new_pos
@@ -103,7 +117,12 @@ def traverse(field, start, end):
 
 if __name__ == "__main__":
     FILE_NAME = "24.real.txt"
+    t1 = datetime.now()
     p1 = part1(FILE_NAME)
-    print("Part 1:", p1)
+    t1 = datetime.now() - t1
+    t2 = datetime.now()
     p2 = part2(FILE_NAME)
-    print("Part 2:", p2)
+    t2 = datetime.now() - t2
+
+    print(f"Part 1: {p1} ({t1}s)")
+    print(f"Part 2: {p2} ({t2}s)")

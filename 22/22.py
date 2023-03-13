@@ -1,4 +1,5 @@
 from copy import deepcopy
+from typing import Callable, Tuple
 
 
 def get_input(filename="21.real.txt"):
@@ -39,7 +40,7 @@ def print_map(in_map, position, direction):
 
 def wrapping_p1(
     map: dict, position: complex, direction: complex
-) -> "tuple[complex, complex]":
+) -> "Tuple[complex, complex]":
     if direction == complex(0, 1):
         return (
             complex(
@@ -75,7 +76,7 @@ def wrapping_p1(
 
 def wrapping_p2(
     map: dict, position: complex, direction: complex
-) -> "tuple[complex, complex]":
+) -> Tuple[complex, complex]:
     # this is hard...
     if direction == complex(0, 1):
         return (
@@ -110,7 +111,10 @@ def wrapping_p2(
     )
 
 
-def solve(filename, wrapping):
+def solve(
+        filename: str,
+        wrapping: Callable[[dict, complex, complex], Tuple[complex, complex]]
+    ) -> int:
     input = get_input(filename)
     score = {">": 0, "<": 2, "v": 1, "^": 3}
     icon = {
