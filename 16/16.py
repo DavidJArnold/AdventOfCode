@@ -1,5 +1,5 @@
 from typing import List, Dict, Union, Tuple
-from copy import deepcopy
+# from copy import deepcopy
 from time import time
 
 
@@ -57,7 +57,7 @@ def dijkstra(
     source: str,
     target: str
 ) -> int:
-    Q: list = deepcopy(names)
+    Q: list = names.copy()
     dist = {v: 0 if v == source else 1_000_000 for v in names}
 
     while Q is not []:
@@ -83,7 +83,7 @@ def upper_bound(
     # get a upper bound on final solution
     release = current
     t = time_left
-    while not all(is_open) and t > 0:
+    while not all(is_open) and t > 2:
         max_flow = 0
         best_vertex = None
         for idx in range(len(flows)):
@@ -97,6 +97,7 @@ def upper_bound(
         t -= 2
     return release
 
+
 def upper_bound2(
     flows: list,
     is_open: list,
@@ -106,7 +107,7 @@ def upper_bound2(
     release = current
     t = time_left
     inc_t = False
-    while not all(is_open) and t > 0:
+    while not all(is_open) and t > 2:
         max_flow = 0
         best_vertex = None
         for idx in range(len(flows)):
@@ -195,11 +196,11 @@ def step2(
             arrival_time = time + 1 + paths[current_valve_names[idx] + valve_name]
             if arrival_time >= max_time:
                 continue
-            valve_names = deepcopy(current_valve_names)
+            valve_names = current_valve_names.copy()
             valve_names[idx] = valve_name
-            next_action = deepcopy(time_next_action)
+            next_action = time_next_action.copy()
             next_action[idx] = arrival_time
-            open_valve = deepcopy(is_open)
+            open_valve = is_open.copy()
             open_valve[candidate_idx] = True
             candidate_vals.append(
                 (
@@ -220,7 +221,7 @@ def step2(
 
     for choice in candidate_vals:
         # check best outcome for this branch
-        max_limit = upper_bound2(flows, deepcopy(is_open), max_time - choice[0], choice[7])
+        max_limit = upper_bound2(flows, is_open.copy(), max_time - choice[0], choice[7])
         if max_limit < best_release:
             continue
         # print(choice[0], choice[3], choice[5], choice[6], choice[7])
@@ -256,7 +257,7 @@ def step(
         arrival_time = time + 1 + paths[current_valve_name + valve_name]
         if arrival_time >= max_time or is_open[candidate_idx]:
             continue
-        open_valve = deepcopy(is_open)
+        open_valve = is_open.copy()
         open_valve[candidate_idx] = True
         candidate_vals.append(
             (
@@ -276,7 +277,7 @@ def step(
 
     for choice in candidate_vals:
         # check best outcome for this branch
-        max_limit = upper_bound(flows, deepcopy(is_open), max_time - choice[0], choice[6])
+        max_limit = upper_bound(flows, is_open.copy(), max_time - choice[0], choice[6])
         if max_limit < best_release:
             continue
         result = step(*choice, best_release=best_release)
@@ -310,7 +311,7 @@ def prep(filename, max_time: int = 30):
 
     # get a lower bound on the solution
     # if a proposed path can't beat this, it's not worth checking
-    min_rel = lower_bound(names, flows, deepcopy(is_open), short_paths, max_time, 'AA', max_time)
+    min_rel = lower_bound(names, flows, is_open.copy(), short_paths, max_time, 'AA', max_time)
 
     idx_from_name = {name: idx for idx, name in enumerate(names)}
 
