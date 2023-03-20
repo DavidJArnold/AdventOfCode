@@ -57,11 +57,8 @@ def dijkstra(
     source: str,
     target: str
 ) -> int:
-    dist: Dict[str, int] = {}
-    Q: list = []
-    for vertex in names:
-        dist[vertex] = 0 if vertex == source else 1_000_000
-        Q.append(vertex)
+    Q: list = deepcopy(names)
+    dist = {v: 0 if v == source else 1_000_000 for v in names}
 
     while Q is not []:
         min_dist = min(dist[x] for x in Q)
@@ -73,9 +70,7 @@ def dijkstra(
         for v in connections[idx]:
             if v not in Q:
                 continue
-            alt = dist[u] + 1
-            if alt < dist[v]:
-                dist[v] = alt
+            dist[v] = min(dist[u] + 1, dist[v])
     raise ValueError("Path not found")
 
 
@@ -102,7 +97,6 @@ def upper_bound(
         t -= 2
     return release
 
-
 def upper_bound2(
     flows: list,
     is_open: list,
@@ -126,7 +120,7 @@ def upper_bound2(
         if inc_t:
             t -= 2
         inc_t = not inc_t
-    return upper_bound(flows, is_open, time_left, release)
+    return release
 
 
 def lower_bound(
@@ -188,39 +182,6 @@ def step2(
         return value
 
     candidate_vals = []
-
-    # work out which agent is moving
-    if all(t == time for t in time_next_action):
-        # moving both agents
-        for valve_name_0 in names:
-            if valve_name_0 == current_valve_names[0]:
-                continue
-            for valve_name_1 in names:
-                if valve_name_1 == current_valve_names[1] or valve_name_1 == valve_name_0:
-                    continue
-                valve_names = [valve_name_0, valve_name_1]
-                candidate_idxs = [names[n] for n in valve_names]
-                if any(is_open[candidate_idxs[idx]] for idx in range(2)):
-                    continue
-                arrival_times = [time + 1 + paths[current_valve_names[idx] + valve_names[idx]] for idx in range(2)]
-                if any(t >= max_time for t in arrival_times):
-                    continue
-                open_valve = deepcopy(is_open)
-                open_valve[candidate_idxs[0]] = True
-                open_valve[candidate_idxs[1]] = True
-                candidate_vals.append(
-                    (
-                        min(arrival_times),
-                        names,
-                        flows,
-                        open_valve,
-                        paths,
-                        valve_names,
-                        arrival_times,
-                        value + sum((max_time - arrival_times[idx])*flows[candidate_idxs[idx]] for idx in range(2)),
-                        max_time
-                    )
-                )
 
     for idx in range(2):
         if time_next_action[idx] != time:
@@ -362,8 +323,9 @@ def part1(filename, max_time: int = 30) -> int:
     return step(0, idx_from_name, flows, is_open, short_paths, "AA", 0, max_time, min_rel)
 
 
-def part2(filename: str, max_time: int = 30, min_rel: Union[int, None] = None):
+def part2(filename: str, max_time: int = 30):
     idx_from_name, flows, is_open, short_paths, max_time, _ = prep(filename, max_time)
+    min_rel = part1(filename, 26)
 
     return step2(0, idx_from_name, flows, is_open, short_paths, ["AA", "AA"], [0, 0], 0, max_time, min_rel)
 
@@ -376,7 +338,7 @@ if __name__ == "__main__":
     print("Part 1:", p1)
     print(f"{t1-t0}s")
     t0 = time()
-    p2 = part2(filename, 26, p1)
+    p2 = part2(filename, 26)
     t1 = time()
     print("Part 2:", p2)
     print(f"{t1-t0}s")
