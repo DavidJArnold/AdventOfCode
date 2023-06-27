@@ -1,3 +1,5 @@
 *.txt:Zone*
 venv/
+*Cargo*
+target/
 07b.py
