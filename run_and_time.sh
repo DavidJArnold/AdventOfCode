@@ -23,22 +23,20 @@ for dir in */; do
             python_output=$(python3 "$dir.py")
             end_time=$(date +%s.%N)
             elapsed_time_python=$(echo "$end_time - $start_time" | bc)
-            python_runtime=$(echo "$python_runtime + $elapsed_time_python" | bc)
 
             cargo build -r &>/dev/null
             start_time=$(date +%s.%N)
             rust_output=$("./target/release/day_$dir")
             end_time=$(date +%s.%N)
             elapsed_time_rust=$(echo "$end_time - $start_time" | bc)
-            rust_runtime=$(echo "$rust_runtime + $elapsed_time_rust" | bc)
             cd ..
 
             echo "Day $dir"
-            echo "Python: ${elapsed_time_python}s"
-            echo "Rust:   ${elapsed_time_rust}s"
-
             if files_are_similar <(echo "$python_output") <(echo "$rust_output"); then
-                :
+                python_runtime=$(echo "$python_runtime + $elapsed_time_python" | bc)
+                rust_runtime=$(echo "$rust_runtime + $elapsed_time_rust" | bc)
+                echo "Python: ${elapsed_time_python}s"
+                echo "Rust:   ${elapsed_time_rust}s"
             else
                 echo "Python and Rust outputs are different in '$dir' directory."
                 echo "$python_output"
