@@ -34,11 +34,7 @@ fn read_input(contents: &str) -> HashMap<(i32, i32), char> {
 
 fn print_cave(cave: &HashMap<(i32, i32), char>) {
     let cave_copy = cave.clone();
-    println!("{:?}", cave_copy);
     let pts = cave_copy.keys();
-    println!("{:?}", pts);
-    let cs = pts.clone().map(|x| x.0).collect::<Vec<_>>();
-    println!("{:?}", cs);
     let x_min = pts.clone().map(|x| x.0).min().unwrap();
     let x_max = pts.clone().map(|x| x.0).max().unwrap();
     let y_min = pts.clone().map(|x| x.1).min().unwrap();
@@ -47,29 +43,29 @@ fn print_cave(cave: &HashMap<(i32, i32), char>) {
     for _ in 0..(y_max + 3 - y_min) {
         let mut col = vec![];
         for _ in 0..(x_max + 3 - x_min) {
-            col.push('.');
+            col.push(' ');
         }
         arr.push(col);
     }
     for (idx, x) in (x_min - 1..x_max + 1).enumerate() {
         for (jdx, y) in (y_min - 1..y_max + 1).enumerate() {
-            arr[jdx][idx] = *cave_copy.get(&(x, y as i32)).unwrap_or(&'.');
+            arr[jdx][idx] = *cave_copy.get(&(x, y as i32)).unwrap_or(&' ');
         }
     }
     for row in arr {
-        println!("{:?}", row.iter().collect::<String>());
+        println!("{}", row.iter().collect::<String>());
     }
 }
 
 fn move_sand(
     cave: &mut HashMap<(i32, i32), char>,
     cond: impl Fn((i32, i32)) -> bool,
-    height: i32,
+    cond2: impl Fn((i32, i32)) -> bool,
 ) -> usize {
     let mut sand: (i32, i32) = (0, 0);
     while cond(sand) {
         sand = (500, 0);
-        while sand.1 <= height + 2 {
+        while cond2(sand) {
             if !cave.contains_key(&(sand.0, sand.1 + 1)) {
                 sand = (sand.0, sand.1 + 1);
             } else if !cave.contains_key(&(sand.0 - 1, sand.1 + 1)) {
@@ -82,16 +78,16 @@ fn move_sand(
             }
         }
     }
+    // print_cave(&cave);
     return cave.values().filter(|x| x == &&'o').count();
 }
 
 fn part1(filename: &str) -> usize {
     let contents = std::fs::read_to_string(filename).unwrap();
     let mut cave = read_input(&contents);
-    // print_cave(&cave);
     let height = cave.clone().keys().map(|x| x.1).max().unwrap().to_owned();
     let cond = |x: (i32, i32)| x.1 <= height;
-    return move_sand(&mut cave, cond, height);
+    return move_sand(&mut cave, cond, cond);
 }
 
 fn part2(filename: &str) -> usize {
@@ -99,11 +95,11 @@ fn part2(filename: &str) -> usize {
     let mut cave = read_input(&contents);
     let height = cave.clone().keys().map(|x| x.1).max().unwrap().to_owned();
     let cond = |x| x != (500, 0);
+    let cond2 = |x: (i32, i32)| x.1 < height + 2;
     for idx in (-height - 2)..(height + 3) {
         cave.insert((500 + idx as i32, height + 2), '#');
     }
-
-    return move_sand(&mut cave, cond, height);
+    return move_sand(&mut cave, cond, cond2);
 }
 
 fn main() {
