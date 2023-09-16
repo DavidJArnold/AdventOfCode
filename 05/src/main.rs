@@ -110,6 +110,6 @@ fn main() {
     let p1 = solve(filename, &move_p1);
     let p2 = solve(filename, &move_p2);
 
-    println!("Part 1: {:?}", p1);
-    println!("Part 2: {:?}", p2);
+    println!("Part 1: {}", p1);
+    println!("Part 2: {}", p2);
 }
