@@ -1,6 +1,9 @@
 with open("15.real.txt", "r") as f:
     input = f.read().strip()
 
+test_row = 2_000_000
+range_limit = 4_000_000
+
 
 def dist(a, b):
     # Manhattan distance between two points
@@ -34,7 +37,7 @@ def part1(test_row: int = 2_000_000):
     return len(blocked) - len(blockedSB)
 
 
-print("Part 1: ", part1())
+print("Part 1: ", part1(test_row=test_row))
 
 
 def parse(input=input):
@@ -81,22 +84,18 @@ def find_beacon(range_limit, sensors):
         perim = make_circle(sensor[0], sensor[1] + 1, range_limit)
         for p in perim:
             # check each point along the perimeter
-            c = 0
+            valid = True
             for o in sensors:
                 # calculate distance to the sensor
                 d = dist([p[0], p[1]], o[0])
                 if d <= o[1]:
                     # if it's less than the distance to the closest beacon,
                     # there can't be a beacon here -> move to next point on perimeter
+                    valid = False
                     break
-                if d == o[1] + 1:
-                    # this is a candidate for the beacon position, add one to the count
-                    c += 1
-            if c == 4:
-                # four circles intersect, this is a valid location for the beacon
+            if valid:
                 return p
 
 
-range_limit = 4_000_000
 beacon = find_beacon(range_limit, parse(input))
 print(f"Part 2: {str(4 * beacon[0])}{str(beacon[1])}")
