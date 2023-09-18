@@ -37,7 +37,7 @@ def part1(test_row: int = 2_000_000):
     return len(blocked) - len(blockedSB)
 
 
-print("Part 1: ", part1(test_row=test_row))
+print("Part 1:", part1(test_row=test_row))
 
 
 def parse(input=input):
@@ -98,4 +98,4 @@ def find_beacon(range_limit, sensors):
 
 
 beacon = find_beacon(range_limit, parse(input))
-print(f"Part 2: {str(4 * beacon[0])}{str(beacon[1])}")
+print(f"Part 2: {str(4_000_000 * beacon[0] + beacon[1])}")
