@@ -108,5 +108,4 @@ def find_beacon(range_limit, sensors):
 
 
 beacon = find_beacon(range_limit, parse(input))
-print(beacon)
 print(f"Part 2: {str(4_000_000 * beacon[0] + beacon[1])}")
