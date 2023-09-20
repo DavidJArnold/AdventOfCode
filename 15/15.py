@@ -79,23 +79,34 @@ def find_beacon(range_limit, sensors):
     # the beacon must be at the intersection of 4 circles,
     # centred on sensors with radius d+1 (where d is the
     # distance from the sensor to the nearest beacon)
+    perim = []
     for sensor in sensors:
-        # create circle radius d+1 around the sensor (excluding points below 0 and above the limit)
-        perim = make_circle(sensor[0], sensor[1] + 1, range_limit)
-        for p in perim:
-            # check each point along the perimeter
-            valid = True
-            for o in sensors:
-                # calculate distance to the sensor
-                d = dist([p[0], p[1]], o[0])
-                if d <= o[1]:
-                    # if it's less than the distance to the closest beacon,
-                    # there can't be a beacon here -> move to next point on perimeter
-                    valid = False
-                    break
-            if valid:
-                return p
+        # create circle radius d+1 around the sensor
+        # (excluding points below 0 and above the limit)
+        perim.append(make_circle(sensor[0], sensor[1] + 1, range_limit))
+
+    for i in range(len(perim)):
+        for j in range(i+1, len(perim)):
+            if perim[i].isdisjoint(perim[j]):
+                continue
+            pij = perim[i].intersection(perim[j])
+            for k in range(j+1, len(perim)):
+                if pij.isdisjoint(perim[k]):
+                    continue
+                pijk = pij.intersection(perim[k])
+                for ll in range(len(perim)):
+                    if pijk.isdisjoint(perim[ll]):
+                        continue
+                    for opt in pijk.intersection(perim[ll]):
+                        valid = True
+                        for sensor in sensors:
+                            if dist(opt, sensor[0]) < sensor[1]:
+                                valid = False
+                                break
+                        if valid:
+                            return opt
 
 
 beacon = find_beacon(range_limit, parse(input))
+print(beacon)
 print(f"Part 2: {str(4_000_000 * beacon[0] + beacon[1])}")
