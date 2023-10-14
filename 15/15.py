@@ -32,8 +32,9 @@ def part1(test_row: int = 2_000_000):
         dist_limit = distSB - abs(S[1] - test_row)
         if dist_limit >= 0:
             # we can add these positions to the blocked positions set
-            for i in range(S[0] - dist_limit, S[0] + dist_limit + 1):
-                blocked.add(i)
+            blocked = blocked.union(set(range(S[0] - dist_limit, S[0] + dist_limit + 1)))
+            # for i in range(S[0] - dist_limit, S[0] + dist_limit + 1):
+            #     blocked.add(i)
     return len(blocked) - len(blockedSB)
 
 
@@ -59,20 +60,13 @@ def make_circle(centre, radius, range_limit):
     #
     # * in the taxicab metric
 
-    radius_list = range(radius + 1)
-    perim = set()
-    for x in radius_list:
-        y = radius - x
-        for offset in [(1, 1), (-1, 1), (1, -1), (-1, -1)]:
-            new_x, new_y = (centre[0] + offset[0] * x, centre[1] + offset[1] * y)
-            if (
-                new_x >= 0
-                and new_y >= 0
-                and new_x <= range_limit
-                and new_y <= range_limit
-            ):
-                perim.add((new_x, new_y))
-    return perim
+    radius_list = range(radius)
+    perim = []
+    perim.extend((centre[0] + x, centre[1] + radius - x) for x in radius_list if centre[0] + x >= 0 and centre[1] + radius - x >= 0 and centre[0] + x <= range_limit and centre[1] + radius - x <= range_limit)
+    perim.extend((centre[0] + x, centre[1] - radius + x) for x in radius_list if centre[0] + x >= 0 and centre[1] - radius + x >= 0 and centre[0] + x <= range_limit and centre[1] - radius + x <= range_limit)
+    perim.extend((centre[0] - x, centre[1] + radius - x) for x in radius_list if centre[0] - x >= 0 and centre[1] + radius - x >= 0 and centre[0] - x <= range_limit and centre[1] + radius - x <= range_limit)
+    perim.extend((centre[0] - x, centre[1] - radius + x) for x in radius_list if centre[0] - x >= 0 and centre[1] - radius + x >= 0 and centre[0] - x <= range_limit and centre[1] - radius + x <= range_limit)
+    return set(perim)
 
 
 def find_beacon(range_limit, sensors):
@@ -94,7 +88,7 @@ def find_beacon(range_limit, sensors):
                 if pij.isdisjoint(perim[k]):
                     continue
                 pijk = pij.intersection(perim[k])
-                for ll in range(len(perim)):
+                for ll in range(k+1, len(perim)):
                     if pijk.isdisjoint(perim[ll]):
                         continue
                     for opt in pijk.intersection(perim[ll]):
