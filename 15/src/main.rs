@@ -92,6 +92,25 @@ fn part2(filename: &str, range_limit: i64) -> String {
     return format!("{}", beacon.0*4_000_000 + beacon.1)
 }
 
+#[cfg(test)]
+mod tests {
+    use crate::{part1, part2};
+
+    #[test]
+    fn test_part1() {
+        let filename = "15.test.txt";
+        let ans1 = part1(&filename, 10);
+        assert_eq!(ans1, 26)
+    }
+
+    #[test]
+    fn test_part2() {
+        let filename = "15.test.txt";
+        let ans2 = part2(&filename, 20);
+        assert_eq!(ans2, "56000011")
+    }
+}
+
 fn main() {
     let filename = "15.real.txt";
     let ans1 = part1(&filename, 2_000_000);
