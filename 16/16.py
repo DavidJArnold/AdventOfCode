@@ -333,13 +333,7 @@ def part2(filename: str, max_time: int = 30):
 
 if __name__ == "__main__":
     filename = "16.real.txt"
-    t0 = time()
     p1 = part1(filename, 30)
-    t1 = time()
     print("Part 1:", p1)
-    print(f"{t1-t0}s")
-    t0 = time()
     p2 = part2(filename, 26)
-    t1 = time()
     print("Part 2:", p2)
-    print(f"{t1-t0}s")
