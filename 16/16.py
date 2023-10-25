@@ -1,6 +1,4 @@
 from typing import List, Dict, Union, Tuple
-# from copy import deepcopy
-from time import time
 
 
 def get_input(filename="16.real.txt") -> str:
