@@ -125,15 +125,14 @@ def run(num_rocks, show_output=False):
     return chamber
 
 
-print("Part 1: ", max([p[1] for p in run(2022)]) + 1, "\n")
+print("Part 1: ", max([p[1] for p in run(2022)]) + 1)
 
 # For Part 2, we want to identify cycles, so get a long list of results to look at
-chamber = run(10_000, True)
+chamber = run(10_000, False)
 # There is a starting period of 1728 rocks, after which we can see a pattern emerge
 # where each 1735 rocks, the height increases by 2720.
 # So we see how many cycles of 1735 rocks we can fit in the total amount, without getting
 # within 3463 rocks of T. We then calculate the remaining (the first rocks) to get the total.
-print("")
 
 T = 1_000_000_000_000
 # Values for test data:
