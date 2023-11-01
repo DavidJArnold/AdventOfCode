@@ -43,7 +43,7 @@ for dir in */; do
             if files_are_similar <(echo "$python_output") <(echo "$rust_output"); then
                 python_runtime=$(echo "$python_runtime + $elapsed_time_python" | bc)
                 rust_release_runtime=$(echo "$rust_release_runtime + $elapsed_time_rust_release" | bc)
-                rust_debug_runtime=$(echo "$rust_release_runtime + $elapsed_time_rust_debug" | bc)
+                rust_debug_runtime=$(echo "$rust_debug_runtime + $elapsed_time_rust_debug" | bc)
                 echo "Python: ${elapsed_time_python}s"
                 echo "Rust R:   ${elapsed_time_rust_release}s"
                 echo "Rust D:   ${elapsed_time_rust_debug}s"
