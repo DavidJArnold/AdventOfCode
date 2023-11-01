@@ -137,7 +137,7 @@ fn upper_bound(state: &State, time_left: i32, value: i32) -> i32 {
     let mut new_state = state.clone();
     let mut release = value;
     let mut t = time_left;
-    while !new_state.clone().valves.into_iter().all(|x| x.is_open) && t > 2 {
+    while !new_state.valves.iter().all(|x| x.is_open) && t > 2 {
         for _ in 0..new_state.valve_names.len() {
             let mut max_flow = 0;
             let mut best_vertex: Option<&String> = None;
@@ -152,7 +152,7 @@ fn upper_bound(state: &State, time_left: i32, value: i32) -> i32 {
             }
             let best_valve_name = best_vertex.expect("No suitable valve").clone();
             for valve in &mut new_state.valves {
-                if valve.name == best_valve_name {
+                if valve.name == *best_valve_name {
                     valve.is_open = true;
                     release += (t - 2) * valve.flow;
                 }
