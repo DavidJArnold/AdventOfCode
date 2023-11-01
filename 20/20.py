@@ -69,4 +69,4 @@ if __name__ == "__main__":
     p1 = part1(filename)
     print(f"Part 1: {p1}")
     p2 = part2(filename)
-    print(f"Part 1: {p2}")
+    print(f"Part 2: {p2}")
