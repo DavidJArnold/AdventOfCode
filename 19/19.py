@@ -1,5 +1,4 @@
 from typing import List, Tuple, Callable
-from time import time
 from functools import lru_cache
 import math
 
@@ -184,13 +183,7 @@ def part2(filename):
 
 if __name__ == "__main__":
     filename = "19.real.txt"
-    t = time()
     p1 = part1(filename)
-    t = time() - t
     print("Part 1:", p1)
-    print(f"{t:.2}s")
-    t = time()
     p2 = part2(filename)
-    t = time() - t
     print("Part 2:", p2)
-    print(f"{t:.2}s")
