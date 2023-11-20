@@ -1,5 +1,4 @@
 from typing import Callable, Tuple
-from time import time
 
 
 def get_input(filename="21.real.txt"):
@@ -153,13 +152,7 @@ def solve(
 
 if __name__ == "__main__":
     filename = "22.real.txt"
-    t1 = time()
     p1 = solve(filename, wrapping_p1)
-    t2 = time()
     print("Part 1:", p1)
-    print(f"{t2-t1:.2}s")
-    t1 = time()
     p2 = solve(filename, wrapping_p2)
     print("Part 2:", p2)
-    t2 = time()
-    print(f"{t2-t1:.2}s")
