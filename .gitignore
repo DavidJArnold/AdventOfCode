@@ -1,4 +1,4 @@
 *.txt:Zone*
 venv/
 07b.py
-*/target/
+*/*/target/*
