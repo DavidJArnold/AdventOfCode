@@ -41,6 +41,17 @@ fn parse_input(input: &str) -> (Vec<u64>, Vec<Map>) {
     (seeds, maps)
 }
 
+fn evaluate_inverse_map(map: &Map, start: u64) -> u64 {
+    for section in &map.sections {
+        if (section.destination_start..(section.destination_start + section.length))
+            .contains(&start)
+        {
+            return start + section.source_start - section.destination_start;
+        }
+    }
+    return start;
+}
+
 fn evaluate_map(map: &Map, start: u64) -> u64 {
     for section in &map.sections {
         if (section.source_start..(section.source_start + section.length)).contains(&start) {
