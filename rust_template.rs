@@ -1,6 +1,6 @@
 const REAL_FILENAME: &str = ".real.txt";
 
-fn parse_input(input) -> () {
+fn parse_input(input: &str) -> () {
 }
 
 fn part1(filename: &str) -> i32 {
@@ -31,7 +31,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     const TEST_FILENAME: &str = ".test.txt";
-    use crate::{part1, part2};
+    use crate::*;
 
     #[test]
     fn test_part1() {
